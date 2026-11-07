@@ -6,10 +6,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>DEALBRIDGE</title>
 <style>
-:root{
- --bg:#080d20;--panel:#141b36;--line:#303958;
- --purple:#9369ff;--text:#f5f6ff;--muted:#aab3cf
-}
+:root{--bg:#080d20;--panel:#141b36;--line:#303958;--purple:#9369ff;--text:#f5f6ff;--muted:#aab3cf}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
@@ -23,6 +20,7 @@ a{color:inherit;text-decoration:none}
 a:hover{color:#b9a0ff}
 .btn{border:0;border-radius:10px;padding:12px 19px;background:var(--purple);color:white;font-weight:bold}
 .btn:hover{background:#7950e5}
+.btn:disabled{opacity:.5;cursor:wait}
 .secondary{background:#263052}
 .secondary:hover{background:#39446d}
 .hero{padding:90px 20px;text-align:center;background:radial-gradient(ellipse at top,#34205e,#080d20 72%)}
@@ -42,7 +40,7 @@ h2{font-size:29px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden}
 .visual{height:155px;display:grid;place-items:center;font-size:58px;background:linear-gradient(135deg,#26386c,#53308c)}
 .content{padding:20px}
-.content h3{margin:5px 0 12px}
+.content h3{margin:5px 0 12px;overflow-wrap:anywhere}
 .price{color:#c4afff;font-size:24px;font-weight:bold}
 .tag{color:#b7a0ff;font-size:13px;font-weight:bold}
 .card .btn{margin-top:15px;width:100%}
@@ -54,6 +52,10 @@ footer{text-align:center;padding:35px;border-top:1px solid var(--line);color:var
 .modal label{display:block;margin:13px 0 6px}
 .modal-actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
 .notice{font-size:13px;color:var(--muted);line-height:1.5}
+.status{max-width:1200px;margin:15px auto;padding:12px 20px;color:#d5c7ff}
+.status:empty{display:none}
+.account{font-size:13px;color:var(--muted);max-width:200px;overflow-wrap:anywhere}
+.hidden{display:none!important}
 @media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}.search{grid-template-columns:1fr}}
 @media(max-width:550px){.grid{grid-template-columns:1fr}.hero{padding:60px 15px}.links{gap:10px}#languageSwitcher{width:100%}}
 </style>
@@ -73,10 +75,15 @@ footer{text-align:center;padding:35px;border-top:1px solid var(--line);color:var
 </select>
 <a href="#offers" id="navOffers"></a>
 <a href="#about" id="navAbout"></a>
-<button class="btn" id="addBtn"></button>
+<span class="account" id="accountEmail"></span>
+<button class="btn secondary" id="authBtn" type="button"></button>
+<button class="btn secondary hidden" id="logoutBtn" type="button"></button>
+<button class="btn" id="addBtn" type="button"></button>
 </div>
 </nav>
 </header>
+
+<div class="status" id="statusMessage" role="status"></div>
 
 <section class="hero">
 <h1 id="heroTitle"></h1>
@@ -84,7 +91,7 @@ footer{text-align:center;padding:35px;border-top:1px solid var(--line);color:var
 <div class="search">
 <input id="searchInput" type="search" maxlength="100">
 <select id="categorySelect"></select>
-<button class="btn" id="searchBtn"></button>
+<button class="btn" id="searchBtn" type="button"></button>
 </div>
 </section>
 
@@ -97,7 +104,6 @@ footer{text-align:center;padding:35px;border-top:1px solid var(--line);color:var
 <div class="grid" id="offersGrid"></div>
 <div class="empty" id="empty" hidden></div>
 </section>
-
 <section id="about" style="margin-top:75px">
 <h2 id="aboutTitle"></h2>
 <p class="muted" id="aboutText"></p>
@@ -106,26 +112,39 @@ footer{text-align:center;padding:35px;border-top:1px solid var(--line);color:var
 
 <footer id="footerText"></footer>
 
+<div class="overlay" id="authOverlay">
+<div class="modal" role="dialog" aria-modal="true">
+<h2 id="authTitle"></h2>
+<p class="notice" id="authNotice"></p>
+<form id="authForm">
+<label for="authEmail" id="emailLabel">Email</label>
+<input id="authEmail" type="email" autocomplete="email" required maxlength="254">
+<label for="authPassword" id="passwordLabel"></label>
+<input id="authPassword" type="password" autocomplete="current-password" minlength="8" required>
+<div class="modal-actions">
+<button class="btn" type="submit" id="authSubmit"></button>
+<button class="btn secondary" type="button" id="switchAuth"></button>
+<button class="btn secondary" type="button" id="closeAuth"></button>
+</div>
+</form>
+</div>
+</div>
+
 <div class="overlay" id="addOverlay">
 <div class="modal" role="dialog" aria-modal="true">
 <h2 id="addTitle"></h2>
-<p class="notice" id="localNotice"></p>
+<p class="notice" id="offerNotice"></p>
 <form id="offerForm">
 <label for="offerTitle" id="labelTitle"></label>
 <input id="offerTitle" name="title" maxlength="80" required>
-
 <label for="offerCategory" id="labelCategory"></label>
 <select id="offerCategory" name="category"></select>
-
 <label for="offerCity" id="labelCity"></label>
 <input id="offerCity" name="city" maxlength="60" required>
-
 <label for="offerPrice" id="labelPrice"></label>
 <input id="offerPrice" name="price" type="number" min="0" max="1000000" step="0.01" required>
-
 <label for="offerDescription" id="labelDescription"></label>
 <textarea id="offerDescription" name="description" maxlength="500" rows="4" required></textarea>
-
 <div class="modal-actions">
 <button class="btn" type="submit" id="saveBtn"></button>
 <button class="btn secondary" type="button" id="closeAdd"></button>
@@ -140,18 +159,26 @@ footer{text-align:center;padding:35px;border-top:1px solid var(--line);color:var
 <p id="detailCity"></p>
 <p id="detailDescription"></p>
 <h2 id="detailPrice"></h2>
-<p class="notice" id="demoNotice"></p>
+<p class="notice" id="detailNotice"></p>
 <div class="modal-actions">
-<button class="btn secondary" id="closeDetail"></button>
-<button class="btn" id="deleteOffer" hidden></button>
+<button class="btn secondary" id="closeDetail" type="button"></button>
 </div>
 </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 "use strict";
 
-const KEY="dealbridge_demo_offers_v1";
+/* SUPABASE BEÁLLÍTÁSOK */
+const SUPABASE_URL="https://lmmngvizpiwiwjwucisn.supabase.co";
+
+/*
+  CSAK A PUBLISHABLE KEY-T ILLESZD IDE.
+  A SECRET / SERVICE_ROLE KULCSOT SOHA!
+*/
+const SUPABASE_KEY="IDE_MASOLD_A_SB_PUBLISHABLE_KULCSODAT";
+
 const LANG_KEY="dealbridge_language_v1";
 const cats=["all","Szállás","Szolgáltatás","Helyiség","Eszköz"];
 const emojis=["🌍","🏨","🔧","🏢","💻"];
@@ -160,253 +187,207 @@ const $=id=>document.getElementById(id);
 const translations={
 sk:{
 navOffers:"Ponuky",navAbout:"Ako to funguje?",add:"+ Pridať ponuku",
+login:"Prihlásiť sa",logout:"Odhlásiť sa",register:"Registrácia",
 headline:"Voľná kapacita sa mení na",highlight:"novú príležitosť.",
 subtitle:"Objavte voľné termíny, priestory a služby.",
 placeholder:"Čo hľadáte?",search:"Hľadať",
 cats:["Všetky","Ubytovanie","Služby","Priestory","Vybavenie"],
-offers:"Objavte ponuky",offersSub:"Nájdite svoju ďalšiu príležitosť.",
-empty:"Žiadne výsledky. Skúste iné vyhľadávanie.",
+offers:"Objavte ponuky",offersSub:"Aktuálne zverejnené ponuky.",
+empty:"Zatiaľ nie sú dostupné žiadne ponuky.",
 about:"Ako to funguje?",
-aboutText:"Firmy zverejňujú voľné kapacity. Návštevníci si prezerajú ponuky. Toto je ukážková verzia bez skutočných rezervácií a platieb.",
+aboutText:"Firmy môžu vytvoriť ponuku. Nové ponuky sa ukladajú ako koncepty a zatiaľ nie sú verejne dostupné. Rezervácie a platby ešte nie sú podporované.",
 footer:"© DEALBRIDGE – Všetky práva vyhradené.",
 newOffer:"Pridať novú ponuku",
-local:"Testovacia ponuka sa uloží iba v tomto prehliadači. Ostatní návštevníci ju neuvidia.",
+offerNotice:"Ponuka sa bezpečne uloží ako koncept. Zatiaľ nebude verejne zobrazená.",
 labels:["Názov ponuky","Kategória","Mesto","Cena (€)","Popis"],
-save:"Uložiť",cancel:"Zrušiť",close:"Zavrieť",del:"Odstrániť moju ponuku",
-demoNotice:"Ukážková stránka – rezervácie zatiaľ nie sú dostupné.",
-details:"Podrobnosti",demo:"UKÁŽKOVÁ PONUKA",own:"MOJA TESTOVACIA PONUKA",
-found:"ponúk",confirm:"Naozaj chcete odstrániť túto ponuku?",
-invalid:"Zadajte platnú cenu.",storage:"Prehliadač nedokázal uložiť ponuku.",
-samples:[
-["Voľná hotelová izba","Ukážková ponuka ubytovania. Izba nie je skutočne dostupná na rezerváciu."],
-["Termín v autoservise","Ukážková ponuka autoservisu. Nejde o skutočnú službu."],
-["Zasadacia miestnosť","Ukážková ponuka zasadacej miestnosti."],
-["Prenájom projektora","Ukážková ponuka prenájmu vybavenia."]
-]
+save:"Uložiť koncept",cancel:"Zrušiť",close:"Zavrieť",
+details:"Podrobnosti",found:"ponúk",published:"ZVEREJNENÁ PONUKA",
+invalid:"Zadajte platnú cenu.",saved:"Koncept bol uložený do databázy.",
+needLogin:"Najprv sa prihláste alebo zaregistrujte.",
+authNotice:"Použite svoj e-mail a heslo s aspoň 8 znakmi.",
+password:"Heslo",switchRegister:"Nemáte účet? Zaregistrujte sa",
+switchLogin:"Máte účet? Prihláste sa",
+confirmEmail:"Skontrolujte svoj e-mail a potvrďte registráciu.",
+loggedIn:"Prihlásenie bolo úspešné.",
+loggedOut:"Boli ste odhlásení.",
+loading:"Načítavajú sa ponuky...",
+connectionError:"Nepodarilo sa načítať ponuky. Skontrolujte pripojenie.",
+setup:"Databázové pripojenie ešte nie je nastavené.",
+detailNotice:"Kontaktovanie a rezervácie zatiaľ nie sú dostupné."
 },
 hu:{
 navOffers:"Ajánlatok",navAbout:"Hogyan működik?",add:"+ Ajánlat feladása",
+login:"Bejelentkezés",logout:"Kijelentkezés",register:"Regisztráció",
 headline:"A szabad lehetőségből",highlight:"valódi üzlet.",
 subtitle:"Fedezd fel a szabad időpontokat, helyeket és szolgáltatásokat.",
 placeholder:"Mit keresel?",search:"Keresés",
 cats:["Összes","Szállás","Szolgáltatás","Helyiség","Eszköz"],
-offers:"Fedezd fel az ajánlatokat",offersSub:"Találd meg a következő lehetőséget.",
-empty:"Nincs találat. Próbálj másik keresést!",
+offers:"Fedezd fel az ajánlatokat",offersSub:"Jelenleg közzétett ajánlatok.",
+empty:"Jelenleg nincsenek elérhető ajánlatok.",
 about:"Hogyan működik?",
-aboutText:"A vállalkozások meghirdetik szabad kapacitásukat. A látogatók kereshetnek az ajánlatok között. Ez jelenleg bemutatóverzió, valódi foglalás és fizetés nélkül.",
+aboutText:"A vállalkozások ajánlatot hozhatnak létre. Az új ajánlatok először piszkozatként kerülnek mentésre, és még nem nyilvánosak. Foglalás és fizetés még nem elérhető.",
 footer:"© DEALBRIDGE – Minden jog fenntartva.",
 newOffer:"Új ajánlat feladása",
-local:"Az ajánlat csak ebben a böngészőben lesz mentve. Más látogatók nem látják.",
+offerNotice:"Az ajánlat biztonságosan piszkozatként kerül mentésre. Egyelőre mások nem látják.",
 labels:["Ajánlat neve","Kategória","Város","Ár (€)","Leírás"],
-save:"Mentés",cancel:"Mégse",close:"Bezárás",del:"Saját ajánlat törlése",
-demoNotice:"Bemutatóoldal – ezen a felületen még nem lehet foglalni.",
-details:"Részletek",demo:"BEMUTATÓ AJÁNLAT",own:"SAJÁT PRÓBAAJÁNLAT",
-found:"ajánlat található",confirm:"Biztosan törlöd ezt a próbaajánlatot?",
-invalid:"Adj meg érvényes árat.",storage:"A böngésző nem tudta elmenteni az ajánlatot.",
-samples:[
-["Szabad hotelszoba","Bemutató szállásajánlat. Nem valódi foglalható szoba."],
-["Autószerviz időpont","Bemutató szervizajánlat. Nem valódi szolgáltatás."],
-["Tárgyalóterem","Bemutató tárgyalóterem-ajánlat."],
-["Projektor bérlés","Bemutató eszközbérlési ajánlat."]
-]
+save:"Piszkozat mentése",cancel:"Mégse",close:"Bezárás",
+details:"Részletek",found:"ajánlat",published:"KÖZZÉTETT AJÁNLAT",
+invalid:"Adj meg érvényes árat.",saved:"A piszkozatot elmentettük az adatbázisba.",
+needLogin:"Előbb jelentkezz be vagy regisztrálj.",
+authNotice:"Add meg az e-mail-címed és egy legalább 8 karakteres jelszót.",
+password:"Jelszó",switchRegister:"Nincs fiókod? Regisztrálj",
+switchLogin:"Van fiókod? Jelentkezz be",
+confirmEmail:"Nézd meg az e-mailjeidet, és erősítsd meg a regisztrációt.",
+loggedIn:"Sikeres bejelentkezés.",
+loggedOut:"Sikeres kijelentkezés.",
+loading:"Ajánlatok betöltése...",
+connectionError:"Az ajánlatok betöltése sikertelen. Ellenőrizd a kapcsolatot.",
+setup:"Az adatbázis-kapcsolat még nincs beállítva.",
+detailNotice:"Kapcsolatfelvétel és foglalás még nem elérhető."
 },
 en:{
 navOffers:"Offers",navAbout:"How it works",add:"+ Post an offer",
+login:"Sign in",logout:"Sign out",register:"Register",
 headline:"Turn unused capacity into",highlight:"new opportunities.",
 subtitle:"Discover available appointments, spaces and services.",
 placeholder:"What are you looking for?",search:"Search",
 cats:["All","Accommodation","Services","Spaces","Equipment"],
-offers:"Explore offers",offersSub:"Find your next opportunity.",
-empty:"No results found. Try another search.",
+offers:"Explore offers",offersSub:"Currently published offers.",
+empty:"No offers are available yet.",
 about:"How it works",
-aboutText:"Businesses list their unused capacity. Visitors browse available offers. This is currently a demo without real bookings or payments.",
+aboutText:"Businesses can create listings. New listings are saved as drafts and are not yet public. Bookings and payments are not supported yet.",
 footer:"© DEALBRIDGE – All rights reserved.",
 newOffer:"Post a new offer",
-local:"Test offers are saved only in this browser. Other visitors cannot see them.",
+offerNotice:"Your offer will be saved as a private draft and will not be publicly visible yet.",
 labels:["Offer title","Category","City","Price (€)","Description"],
-save:"Save",cancel:"Cancel",close:"Close",del:"Delete my offer",
-demoNotice:"Demo website – bookings are not available yet.",
-details:"Details",demo:"DEMO OFFER",own:"MY TEST OFFER",
-found:"offers found",confirm:"Delete this test offer?",
-invalid:"Enter a valid price.",storage:"Your browser could not save this offer.",
-samples:[
-["Available hotel room","Demo accommodation listing. Not a real bookable room."],
-["Car service appointment","Demo garage listing. Not a real service."],
-["Meeting room","Demo meeting room listing."],
-["Projector rental","Demo equipment rental listing."]
-]
+save:"Save draft",cancel:"Cancel",close:"Close",
+details:"Details",found:"offers",published:"PUBLISHED OFFER",
+invalid:"Enter a valid price.",saved:"Draft saved to the database.",
+needLogin:"Please sign in or register first.",
+authNotice:"Enter your email and a password of at least 8 characters.",
+password:"Password",switchRegister:"No account? Register",
+switchLogin:"Already registered? Sign in",
+confirmEmail:"Check your email to confirm your registration.",
+loggedIn:"Successfully signed in.",
+loggedOut:"Successfully signed out.",
+loading:"Loading offers...",
+connectionError:"Could not load offers. Check your connection.",
+setup:"The database connection is not configured yet.",
+detailNotice:"Contact and booking features are not available yet."
 },
 de:{
 navOffers:"Angebote",navAbout:"So funktioniert es",add:"+ Angebot erstellen",
+login:"Anmelden",logout:"Abmelden",register:"Registrieren",
 headline:"Freie Kapazitäten werden zu",highlight:"neuen Chancen.",
 subtitle:"Entdecken Sie freie Termine, Räume und Dienstleistungen.",
 placeholder:"Was suchen Sie?",search:"Suchen",
 cats:["Alle","Unterkünfte","Dienstleistungen","Räume","Ausrüstung"],
-offers:"Angebote entdecken",offersSub:"Finden Sie Ihre nächste Gelegenheit.",
-empty:"Keine Ergebnisse. Versuchen Sie eine andere Suche.",
+offers:"Angebote entdecken",offersSub:"Aktuell veröffentlichte Angebote.",
+empty:"Noch keine Angebote verfügbar.",
 about:"So funktioniert es",
-aboutText:"Unternehmen veröffentlichen freie Kapazitäten. Besucher können Angebote durchsuchen. Dies ist eine Demoversion ohne echte Buchungen oder Zahlungen.",
+aboutText:"Unternehmen können Angebote erstellen. Neue Angebote werden zunächst als Entwürfe gespeichert und sind nicht öffentlich. Buchungen und Zahlungen sind noch nicht verfügbar.",
 footer:"© DEALBRIDGE – Alle Rechte vorbehalten.",
 newOffer:"Neues Angebot",
-local:"Testangebote werden nur in diesem Browser gespeichert. Andere Besucher sehen sie nicht.",
+offerNotice:"Das Angebot wird als nicht öffentlicher Entwurf gespeichert.",
 labels:["Angebotsname","Kategorie","Stadt","Preis (€)","Beschreibung"],
-save:"Speichern",cancel:"Abbrechen",close:"Schließen",del:"Mein Angebot löschen",
-demoNotice:"Demowebsite – Buchungen sind noch nicht möglich.",
-details:"Details",demo:"DEMOANGEBOT",own:"MEIN TESTANGEBOT",
-found:"Angebote gefunden",confirm:"Dieses Testangebot löschen?",
-invalid:"Geben Sie einen gültigen Preis ein.",storage:"Der Browser konnte das Angebot nicht speichern.",
-samples:[
-["Freies Hotelzimmer","Demo-Unterkunft. Kein tatsächlich buchbares Zimmer."],
-["Autowerkstatt-Termin","Demo-Werkstattangebot. Keine echte Dienstleistung."],
-["Besprechungsraum","Demoangebot für einen Besprechungsraum."],
-["Projektorverleih","Demoangebot für einen Projektor."]
-]
+save:"Entwurf speichern",cancel:"Abbrechen",close:"Schließen",
+details:"Details",found:"Angebote",published:"VERÖFFENTLICHT",
+invalid:"Geben Sie einen gültigen Preis ein.",saved:"Entwurf in der Datenbank gespeichert.",
+needLogin:"Bitte zuerst anmelden oder registrieren.",
+authNotice:"E-Mail und Passwort mit mindestens 8 Zeichen eingeben.",
+password:"Passwort",switchRegister:"Kein Konto? Registrieren",
+switchLogin:"Bereits registriert? Anmelden",
+confirmEmail:"Bitte bestätigen Sie Ihre Registrierung per E-Mail.",
+loggedIn:"Erfolgreich angemeldet.",
+loggedOut:"Erfolgreich abgemeldet.",
+loading:"Angebote werden geladen...",
+connectionError:"Angebote konnten nicht geladen werden.",
+setup:"Die Datenbankverbindung ist noch nicht eingerichtet.",
+detailNotice:"Kontakt und Buchungen sind noch nicht verfügbar."
 },
 pl:{
 navOffers:"Oferty",navAbout:"Jak to działa?",add:"+ Dodaj ofertę",
+login:"Zaloguj się",logout:"Wyloguj się",register:"Rejestracja",
 headline:"Wolne zasoby stają się",highlight:"nową szansą.",
 subtitle:"Odkrywaj dostępne terminy, miejsca i usługi.",
 placeholder:"Czego szukasz?",search:"Szukaj",
 cats:["Wszystkie","Noclegi","Usługi","Pomieszczenia","Sprzęt"],
-offers:"Odkryj oferty",offersSub:"Znajdź nową okazję.",
-empty:"Brak wyników. Spróbuj innego wyszukiwania.",
+offers:"Odkryj oferty",offersSub:"Aktualnie opublikowane oferty.",
+empty:"Brak dostępnych ofert.",
 about:"Jak to działa?",
-aboutText:"Firmy publikują wolne zasoby. Odwiedzający przeglądają oferty. To wersja demonstracyjna bez prawdziwych rezerwacji i płatności.",
+aboutText:"Firmy mogą dodawać oferty. Nowe oferty są zapisywane jako szkice i nie są jeszcze publiczne. Rezerwacje i płatności nie są jeszcze dostępne.",
 footer:"© DEALBRIDGE – Wszelkie prawa zastrzeżone.",
 newOffer:"Dodaj nową ofertę",
-local:"Oferty testowe są zapisywane tylko w tej przeglądarce. Inni ich nie zobaczą.",
+offerNotice:"Oferta zostanie zapisana jako niepubliczny szkic.",
 labels:["Nazwa oferty","Kategoria","Miasto","Cena (€)","Opis"],
-save:"Zapisz",cancel:"Anuluj",close:"Zamknij",del:"Usuń moją ofertę",
-demoNotice:"Wersja demonstracyjna – rezerwacje nie są jeszcze dostępne.",
-details:"Szczegóły",demo:"OFERTA DEMO",own:"MOJA OFERTA TESTOWA",
-found:"znalezionych ofert",confirm:"Usunąć tę ofertę testową?",
-invalid:"Podaj poprawną cenę.",storage:"Przeglądarka nie mogła zapisać oferty.",
-samples:[
-["Wolny pokój hotelowy","Przykładowy nocleg. Nie można go zarezerwować."],
-["Termin w warsztacie","Przykładowa usługa warsztatu samochodowego."],
-["Sala konferencyjna","Przykładowa oferta sali konferencyjnej."],
-["Wynajem projektora","Przykładowa oferta wynajmu sprzętu."]
-]
+save:"Zapisz szkic",cancel:"Anuluj",close:"Zamknij",
+details:"Szczegóły",found:"ofert",published:"OPUBLIKOWANA OFERTA",
+invalid:"Podaj poprawną cenę.",saved:"Szkic zapisano w bazie danych.",
+needLogin:"Najpierw zaloguj się lub zarejestruj.",
+authNotice:"Podaj e-mail i hasło zawierające co najmniej 8 znaków.",
+password:"Hasło",switchRegister:"Nie masz konta? Zarejestruj się",
+switchLogin:"Masz konto? Zaloguj się",
+confirmEmail:"Sprawdź e-mail i potwierdź rejestrację.",
+loggedIn:"Zalogowano pomyślnie.",
+loggedOut:"Wylogowano pomyślnie.",
+loading:"Ładowanie ofert...",
+connectionError:"Nie udało się załadować ofert.",
+setup:"Połączenie z bazą danych nie jest jeszcze skonfigurowane.",
+detailNotice:"Kontakt i rezerwacje nie są jeszcze dostępne."
 }
 };
 
-const locations=["Rožňava","Rožňava","Košice","Bratislava"];
-const prices=[69,35,45,20];
-let lang="sk",own=[],category="all",query="",selected=null;
+let lang="sk";
+let category="all";
+let query="";
+let offers=[];
+let currentUser=null;
+let authMode="login";
+let db=null;
 
 try{
  const saved=localStorage.getItem(LANG_KEY);
- if(Object.prototype.hasOwnProperty.call(translations,saved))lang=saved;
-}catch(e){}
-
-try{
- const stored=JSON.parse(localStorage.getItem(KEY)||"[]");
- if(Array.isArray(stored))own=stored.filter(x=>x&&typeof x==="object"&&!x.demo);
+ if(translations[saved])lang=saved;
 }catch(e){}
 
 function t(){return translations[lang]}
-
-function sampleItems(){
- return locations.map((city,i)=>({
-  id:"s"+(i+1),
-  title:t().samples[i][0],
-  description:t().samples[i][1],
-  category:cats[i+1],
-  city,
-  price:prices[i],
-  demo:true,
-  sampleIndex:i
- }));
-}
-
 function make(tag,cls,value){
  const el=document.createElement(tag);
  if(cls)el.className=cls;
  if(value!==undefined)el.textContent=value;
  return el;
 }
-
+function showStatus(message){
+ $("statusMessage").textContent=message||"";
+}
 function priceText(value){
  const locale={sk:"sk-SK",hu:"hu-HU",en:"en-GB",de:"de-DE",pl:"pl-PL"}[lang];
- return Number(value).toLocaleString(locale)+" €";
+ return Number(value).toLocaleString(locale,{
+  minimumFractionDigits:0,
+  maximumFractionDigits:2
+ })+" €";
 }
-
 function categoryLabel(cat){
  const i=cats.indexOf(cat);
  return i<0?cat:t().cats[i];
 }
-
-function save(){
- try{
-  localStorage.setItem(KEY,JSON.stringify(own));
-  return true;
- }catch(e){
-  alert(t().storage);
-  return false;
- }
-}
-
-function render(){
- const all=[...own,...sampleItems()];
- const filtered=all.filter(item=>{
-  if(category!=="all"&&item.category!==category)return false;
-  const names=[item.title,item.description,item.city,categoryLabel(item.category)];
-  if(item.demo){
-   for(const language of Object.values(translations)){
-    names.push(...language.samples[item.sampleIndex]);
-   }
-  }
-  return names.join(" ").toLocaleLowerCase().includes(query);
- });
-
- $("offersGrid").replaceChildren();
- $("count").textContent=filtered.length+" "+t().found;
- $("empty").hidden=filtered.length!==0;
-
- for(const item of filtered){
-  const card=make("article","card");
-  const content=make("div","content");
-  const btn=make("button","btn",t().details);
-  btn.type="button";
-  btn.addEventListener("click",()=>openDetail(item));
-
-  content.append(
-   make("div","tag",item.demo?t().demo:t().own),
-   make("h3","",item.title),
-   make("p","muted","📍 "+item.city),
-   make("div","price",priceText(item.price)),
-   btn
-  );
-
-  const visual=make("div","visual",emojis[Math.max(1,cats.indexOf(item.category))]);
-  card.append(visual,content);
-  $("offersGrid").append(card);
- }
-
- document.querySelectorAll(".category").forEach(btn=>{
-  btn.classList.toggle("active",btn.dataset.cat===category);
- });
- $("categorySelect").value=category;
-}
+function closeOverlay(id){$(id).classList.remove("show")}
+function openOverlay(id){$(id).classList.add("show")}
 
 function renderCategories(){
  for(const id of ["categorySelect","offerCategory"]){
   const select=$(id);
   const previous=select.value;
   select.replaceChildren();
-
   cats.forEach((cat,i)=>{
    if(id==="offerCategory"&&i===0)return;
    const option=make("option","",t().cats[i]);
    option.value=cat;
    select.append(option);
   });
-
   select.value=previous||(id==="categorySelect"?"all":"Szállás");
  }
-
  $("categories").replaceChildren();
-
  cats.forEach((cat,i)=>{
   const btn=make("button","category",emojis[i]+" "+t().cats[i]);
   btn.type="button";
@@ -420,26 +401,79 @@ function renderCategories(){
  });
 }
 
+function render(){
+ const filtered=offers.filter(item=>{
+  if(category!=="all"&&item.category!==category)return false;
+  const words=[
+   item.title,item.description,item.city,categoryLabel(item.category)
+  ].join(" ").toLocaleLowerCase();
+  return words.includes(query);
+ });
+
+ $("offersGrid").replaceChildren();
+ $("count").textContent=filtered.length+" "+t().found;
+ $("empty").hidden=filtered.length!==0;
+
+ for(const item of filtered){
+  const card=make("article","card");
+  const visual=make(
+   "div","visual",
+   emojis[Math.max(1,cats.indexOf(item.category))]
+  );
+  const content=make("div","content");
+  const btn=make("button","btn",t().details);
+  btn.type="button";
+  btn.addEventListener("click",()=>openDetail(item));
+  content.append(
+   make("div","tag",t().published),
+   make("h3","",item.title),
+   make("p","muted","📍 "+item.city),
+   make("div","price",priceText(item.price)),
+   btn
+  );
+  card.append(visual,content);
+  $("offersGrid").append(card);
+ }
+
+ document.querySelectorAll(".category").forEach(btn=>{
+  btn.classList.toggle("active",btn.dataset.cat===category);
+ });
+ $("categorySelect").value=category;
+}
+
+function updateAccount(){
+ $("accountEmail").textContent=currentUser?.email||"";
+ $("authBtn").classList.toggle("hidden",!!currentUser);
+ $("logoutBtn").classList.toggle("hidden",!currentUser);
+}
+
+function updateAuthModal(){
+ $("authTitle").textContent=authMode==="login"?t().login:t().register;
+ $("authSubmit").textContent=authMode==="login"?t().login:t().register;
+ $("switchAuth").textContent=authMode==="login"?t().switchRegister:t().switchLogin;
+ $("authNotice").textContent=t().authNotice;
+ $("authPassword").autocomplete=authMode==="login"?"current-password":"new-password";
+}
+
 function applyLanguage(value){
- if(!Object.prototype.hasOwnProperty.call(translations,value))return;
-
+ if(!translations[value])return;
  lang=value;
- document.documentElement.lang=lang;
- $("languageSwitcher").value=lang;
-
- try{localStorage.setItem(LANG_KEY,lang)}catch(e){}
-
+ document.documentElement.lang=value;
+ $("languageSwitcher").value=value;
+ try{localStorage.setItem(LANG_KEY,value)}catch(e){}
  const d=t();
+
  $("navOffers").textContent=d.navOffers;
  $("navAbout").textContent=d.navAbout;
  $("addBtn").textContent=d.add;
+ $("authBtn").textContent=d.login;
+ $("logoutBtn").textContent=d.logout;
 
  $("heroTitle").replaceChildren(
   document.createTextNode(d.headline),
   document.createElement("br"),
   make("span","",d.highlight)
  );
-
  $("heroSubtitle").textContent=d.subtitle;
  $("searchInput").placeholder=d.placeholder;
  $("searchBtn").textContent=d.search;
@@ -450,39 +484,50 @@ function applyLanguage(value){
  $("aboutText").textContent=d.aboutText;
  $("footerText").textContent=d.footer;
  $("addTitle").textContent=d.newOffer;
- $("localNotice").textContent=d.local;
-
+ $("offerNotice").textContent=d.offerNotice;
  ["labelTitle","labelCategory","labelCity","labelPrice","labelDescription"]
  .forEach((id,i)=>$(id).textContent=d.labels[i]);
-
  $("saveBtn").textContent=d.save;
  $("closeAdd").textContent=d.cancel;
+ $("closeAuth").textContent=d.cancel;
  $("closeDetail").textContent=d.close;
- $("deleteOffer").textContent=d.del;
- $("demoNotice").textContent=d.demoNotice;
+ $("passwordLabel").textContent=d.password;
+ $("detailNotice").textContent=d.detailNotice;
 
+ updateAuthModal();
  renderCategories();
  render();
-
- if(selected){
-  const item=selected.demo
-   ?sampleItems().find(s=>s.id===selected.id)
-   :selected;
-  if(item)openDetail(item);
- }
+ updateAccount();
 }
 
 function openDetail(item){
- selected=item;
  $("detailTitle").textContent=item.title;
  $("detailCity").textContent=categoryLabel(item.category)+" • "+item.city;
  $("detailDescription").textContent=item.description;
  $("detailPrice").textContent=priceText(item.price);
- $("deleteOffer").hidden=!!item.demo;
- $("detailOverlay").classList.add("show");
+ openOverlay("detailOverlay");
 }
 
-function search(){
+async function loadOffers(){
+ if(!db)return;
+ showStatus(t().loading);
+ const {data,error}=await db.from("offers")
+  .select("id,title,category,city,price,description")
+  .eq("status","published")
+  .order("created_at",{ascending:false})
+  .limit(100);
+
+ if(error){
+  console.error("DEALBRIDGE load:",error.message);
+  showStatus(t().connectionError);
+  return;
+ }
+ offers=data||[];
+ showStatus("");
+ render();
+}
+
+function searchOffers(){
  query=$("searchInput").value.trim().toLocaleLowerCase();
  category=$("categorySelect").value;
  render();
@@ -490,89 +535,176 @@ function search(){
 }
 
 $("languageSwitcher").addEventListener("change",e=>applyLanguage(e.target.value));
-$("searchBtn").addEventListener("click",search);
+$("searchBtn").addEventListener("click",searchOffers);
 $("searchInput").addEventListener("keydown",e=>{
- if(e.key==="Enter")search();
+ if(e.key==="Enter")searchOffers();
 });
-$("categorySelect").addEventListener("change",search);
-$("addBtn").addEventListener("click",()=>{
- $("addOverlay").classList.add("show");
+$("categorySelect").addEventListener("change",searchOffers);
+
+$("authBtn").addEventListener("click",()=>{
+ authMode="login";
+ updateAuthModal();
+ openOverlay("authOverlay");
 });
-$("closeAdd").addEventListener("click",()=>{
- $("addOverlay").classList.remove("show");
+$("switchAuth").addEventListener("click",()=>{
+ authMode=authMode==="login"?"register":"login";
+ updateAuthModal();
 });
-$("closeDetail").addEventListener("click",()=>{
- $("detailOverlay").classList.remove("show");
+$("closeAuth").addEventListener("click",()=>closeOverlay("authOverlay"));
+
+$("authForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ if(!db){alert(t().setup);return;}
+
+ const email=$("authEmail").value.trim();
+ const password=$("authPassword").value;
+ const btn=$("authSubmit");
+ btn.disabled=true;
+
+ try{
+  let result;
+  if(authMode==="register"){
+   result=await db.auth.signUp({
+    email,password,
+    options:{emailRedirectTo:window.location.origin+window.location.pathname}
+   });
+  }else{
+   result=await db.auth.signInWithPassword({email,password});
+  }
+  if(result.error)throw result.error;
+
+  if(authMode==="register"){
+   alert(t().confirmEmail);
+  }else{
+   currentUser=result.data.user;
+   updateAccount();
+   showStatus(t().loggedIn);
+  }
+  $("authForm").reset();
+  closeOverlay("authOverlay");
+ }catch(error){
+  alert(error.message||String(error));
+ }finally{
+  btn.disabled=false;
+ }
 });
 
-$("offerForm").addEventListener("submit",e=>{
+$("logoutBtn").addEventListener("click",async()=>{
+ if(!db)return;
+ const {error}=await db.auth.signOut();
+ if(error){alert(error.message);return;}
+ currentUser=null;
+ updateAccount();
+ showStatus(t().loggedOut);
+});
+
+$("addBtn").addEventListener("click",()=>{
+ if(!currentUser){
+  showStatus(t().needLogin);
+  authMode="login";
+  updateAuthModal();
+  openOverlay("authOverlay");
+  return;
+ }
+ openOverlay("addOverlay");
+});
+$("closeAdd").addEventListener("click",()=>closeOverlay("addOverlay"));
+$("closeDetail").addEventListener("click",()=>closeOverlay("detailOverlay"));
+
+$("offerForm").addEventListener("submit",async e=>{
  e.preventDefault();
- const data=new FormData(e.target);
+ if(!db){alert(t().setup);return;}
+ if(!currentUser){alert(t().needLogin);return;}
+
+ const form=e.target;
+ const data=new FormData(form);
  const price=Number(data.get("price"));
+ const title=String(data.get("title")||"").trim();
+ const categoryValue=String(data.get("category")||"");
+ const city=String(data.get("city")||"").trim();
+ const description=String(data.get("description")||"").trim();
 
  if(!Number.isFinite(price)||price<0||price>1000000){
   alert(t().invalid);
   return;
  }
+ if(!title||!city||!description)return;
+ if(!cats.slice(1).includes(categoryValue))return;
 
- const item={
-  id:"own-"+Date.now()+"-"+Math.random().toString(36).slice(2),
-  title:String(data.get("title")).trim(),
-  category:String(data.get("category")),
-  city:String(data.get("city")).trim(),
-  price,
-  description:String(data.get("description")).trim(),
-  demo:false
- };
+ const btn=$("saveBtn");
+ btn.disabled=true;
+ try{
+  const {data:userData,error:userError}=await db.auth.getUser();
+  if(userError||!userData.user)throw new Error(t().needLogin);
 
- if(!item.title||!item.city||!item.description)return;
- if(!cats.includes(item.category)||item.category==="all")return;
+  const {error}=await db.from("offers").insert({
+   title,
+   category:categoryValue,
+   city,
+   price,
+   description,
+   status:"draft",
+   owner_id:userData.user.id
+  });
+  if(error)throw error;
 
- own.unshift(item);
- if(!save()){
-  own.shift();
-  return;
+  form.reset();
+  closeOverlay("addOverlay");
+  showStatus(t().saved);
+ }catch(error){
+  alert(error.message||String(error));
+ }finally{
+  btn.disabled=false;
  }
-
- e.target.reset();
- $("addOverlay").classList.remove("show");
- category="all";
- query="";
- $("searchInput").value="";
- render();
 });
 
-$("deleteOffer").addEventListener("click",()=>{
- if(!selected||selected.demo)return;
- if(!confirm(t().confirm))return;
-
- const previous=own;
- own=own.filter(item=>item.id!==selected.id);
-
- if(!save()){
-  own=previous;
-  return;
- }
-
- $("detailOverlay").classList.remove("show");
- selected=null;
- render();
-});
-
-["addOverlay","detailOverlay"].forEach(id=>{
+["authOverlay","addOverlay","detailOverlay"].forEach(id=>{
  $(id).addEventListener("click",e=>{
-  if(e.target===$(id))$(id).classList.remove("show");
+  if(e.target===$(id))closeOverlay(id);
  });
 });
 
 document.addEventListener("keydown",e=>{
  if(e.key==="Escape"){
-  $("addOverlay").classList.remove("show");
-  $("detailOverlay").classList.remove("show");
+  ["authOverlay","addOverlay","detailOverlay"].forEach(closeOverlay);
  }
 });
 
-applyLanguage(lang);
+async function start(){
+ applyLanguage(lang);
+
+ if(!SUPABASE_KEY.startsWith("sb_publishable_")){
+  showStatus(t().setup);
+  return;
+ }
+ if(!window.supabase||!window.supabase.createClient){
+  showStatus(t().connectionError);
+  return;
+ }
+
+ try{
+  db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
+   auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
+  });
+
+  db.auth.onAuthStateChange((_event,session)=>{
+   currentUser=session?.user||null;
+   updateAccount();
+  });
+
+  const {data,error}=await db.auth.getSession();
+  if(error)console.error("DEALBRIDGE auth:",error.message);
+  currentUser=data?.session?.user||null;
+  updateAccount();
+
+  await loadOffers();
+ }catch(error){
+  console.error("DEALBRIDGE startup:",error);
+  showStatus(t().connectionError);
+ }
+}
+
+start();
 </script>
 </body>
 </html>
