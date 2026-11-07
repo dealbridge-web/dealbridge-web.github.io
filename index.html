@@ -1,404 +1,578 @@
 
 <!DOCTYPE html>
-<html lang="hu">
+<html lang="sk">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DEALBRIDGE – Találd meg a lehetőséget</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DEALBRIDGE</title>
 <style>
-:root {
-  --bg:#080d20;
-  --panel:#141b36;
-  --line:#303958;
-  --purple:#9369ff;
-  --text:#f5f6ff;
-  --muted:#aab3cf;
+:root{
+ --bg:#080d20;--panel:#141b36;--line:#303958;
+ --purple:#9369ff;--text:#f5f6ff;--muted:#aab3cf
 }
-* {box-sizing:border-box}
-body {
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Arial,sans-serif;
-}
-button,input,select,textarea {font:inherit}
-button {cursor:pointer}
-header {
-  position:sticky;top:0;z-index:10;
-  background:#0b1027;
-  border-bottom:1px solid var(--line);
-}
-nav {
-  max-width:1200px;margin:auto;padding:18px;
-  display:flex;align-items:center;justify-content:space-between;
-  gap:16px;flex-wrap:wrap;
-}
-.logo {font-size:24px;font-weight:900;color:#b9a0ff}
-.links {display:flex;gap:18px;align-items:center;flex-wrap:wrap}
-a {color:inherit;text-decoration:none}
-a:hover {color:#b9a0ff}
-.btn {
-  border:0;border-radius:10px;padding:12px 19px;
-  background:var(--purple);color:white;font-weight:bold;
-}
-.btn:hover {background:#7950e5}
-.secondary {background:#263052}
-.secondary:hover {background:#39446d}
-.hero {
-  padding:90px 20px;text-align:center;
-  background:radial-gradient(ellipse at top,#34205e,#080d20 72%);
-}
-.hero h1 {font-size:clamp(34px,6vw,64px);margin:0 0 20px}
-.hero h1 span {color:#ac8aff}
-.hero p {color:var(--muted);font-size:18px}
-.search {
-  max-width:950px;margin:35px auto 0;
-  background:var(--panel);padding:14px;border-radius:16px;
-  display:grid;grid-template-columns:2fr 1fr auto;gap:10px;
-  border:1px solid var(--line);
-}
-input,select,textarea {
-  width:100%;padding:13px;border-radius:9px;
-  background:#0b122b;color:white;border:1px solid var(--line);
-}
-main {max-width:1200px;margin:auto;padding:35px 20px}
-h2 {font-size:29px}
-.muted {color:var(--muted)}
-.categories {display:flex;gap:12px;flex-wrap:wrap;margin:25px 0}
-.category {
-  padding:13px 18px;border-radius:12px;
-  background:var(--panel);border:1px solid var(--line);
-  color:white;
-}
-.category.active {background:#50359b;border-color:#a78bfa}
-.grid {
-  display:grid;grid-template-columns:repeat(3,1fr);
-  gap:22px;margin-top:25px;
-}
-.card {
-  background:var(--panel);border:1px solid var(--line);
-  border-radius:16px;overflow:hidden;
-}
-.visual {
-  height:155px;display:grid;place-items:center;
-  font-size:58px;background:linear-gradient(135deg,#26386c,#53308c);
-}
-.content {padding:20px}
-.content h3 {margin:5px 0 12px}
-.price {color:#c4afff;font-size:24px;font-weight:bold}
-.tag {color:#b7a0ff;font-size:13px}
-.card .btn {margin-top:15px;width:100%}
-.empty {padding:35px;text-align:center;color:var(--muted)}
-footer {
-  text-align:center;padding:35px;
-  border-top:1px solid var(--line);color:var(--muted);
-}
-.overlay {
-  position:fixed;inset:0;background:#000b;
-  display:none;align-items:center;justify-content:center;
-  z-index:30;padding:15px;
-}
-.overlay.show {display:flex}
-.modal {
-  background:var(--panel);border:1px solid var(--line);
-  border-radius:18px;padding:25px;width:100%;
-  max-width:520px;max-height:90vh;overflow:auto;
-}
-.modal label {display:block;margin:13px 0 6px}
-.modal-actions {display:flex;gap:10px;margin-top:20px}
-.notice {font-size:13px;color:var(--muted)}
-@media(max-width:850px) {
-  .grid {grid-template-columns:repeat(2,1fr)}
-  .search {grid-template-columns:1fr}
-}
-@media(max-width:550px) {
-  .grid {grid-template-columns:1fr}
-  .hero {padding:60px 15px}
-  .links {gap:10px}
-}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+header{position:sticky;top:0;z-index:10;background:#0b1027;border-bottom:1px solid var(--line)}
+nav{max-width:1200px;margin:auto;padding:18px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.logo{font-size:24px;font-weight:900;color:#b9a0ff}
+.links{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+a{color:inherit;text-decoration:none}
+a:hover{color:#b9a0ff}
+.btn{border:0;border-radius:10px;padding:12px 19px;background:var(--purple);color:white;font-weight:bold}
+.btn:hover{background:#7950e5}
+.secondary{background:#263052}
+.secondary:hover{background:#39446d}
+.hero{padding:90px 20px;text-align:center;background:radial-gradient(ellipse at top,#34205e,#080d20 72%)}
+.hero h1{font-size:clamp(34px,6vw,64px);margin:0 0 20px;line-height:1.15}
+.hero h1 span{color:#ac8aff}
+.hero p{color:var(--muted);font-size:18px}
+.search{max-width:950px;margin:35px auto 0;background:var(--panel);padding:14px;border-radius:16px;display:grid;grid-template-columns:2fr 1fr auto;gap:10px;border:1px solid var(--line)}
+input,select,textarea{width:100%;padding:13px;border-radius:9px;background:#0b122b;color:white;border:1px solid var(--line)}
+#languageSwitcher{width:auto;min-width:145px}
+main{max-width:1200px;margin:auto;padding:35px 20px}
+h2{font-size:29px}
+.muted{color:var(--muted)}
+.categories{display:flex;gap:12px;flex-wrap:wrap;margin:25px 0}
+.category{padding:13px 18px;border-radius:12px;background:var(--panel);border:1px solid var(--line);color:white}
+.category.active{background:#50359b;border-color:#a78bfa}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:25px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.visual{height:155px;display:grid;place-items:center;font-size:58px;background:linear-gradient(135deg,#26386c,#53308c)}
+.content{padding:20px}
+.content h3{margin:5px 0 12px}
+.price{color:#c4afff;font-size:24px;font-weight:bold}
+.tag{color:#b7a0ff;font-size:13px;font-weight:bold}
+.card .btn{margin-top:15px;width:100%}
+.empty{padding:35px;text-align:center;color:var(--muted)}
+footer{text-align:center;padding:35px;border-top:1px solid var(--line);color:var(--muted)}
+.overlay{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;z-index:30;padding:15px}
+.overlay.show{display:flex}
+.modal{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:25px;width:100%;max-width:520px;max-height:90vh;overflow:auto}
+.modal label{display:block;margin:13px 0 6px}
+.modal-actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+.notice{font-size:13px;color:var(--muted);line-height:1.5}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}.search{grid-template-columns:1fr}}
+@media(max-width:550px){.grid{grid-template-columns:1fr}.hero{padding:60px 15px}.links{gap:10px}#languageSwitcher{width:100%}}
 </style>
 </head>
 <body>
 
 <header>
 <nav>
-  <a class="logo" href="#">◆ DEALBRIDGE</a>
-  <div class="links">
-    <a href="#offers">Ajánlatok</a>
-    <a href="#about">Hogyan működik?</a>
-    <button class="btn" id="addBtn">+ Ajánlat feladása</button>
-  </div>
+<a class="logo" href="#">◆ DEALBRIDGE</a>
+<div class="links">
+<select id="languageSwitcher" aria-label="Language">
+<option value="sk">🇸🇰 Slovenčina</option>
+<option value="hu">🇭🇺 Magyar</option>
+<option value="en">🇬🇧 English</option>
+<option value="de">🇩🇪 Deutsch</option>
+<option value="pl">🇵🇱 Polski</option>
+</select>
+<a href="#offers" id="navOffers"></a>
+<a href="#about" id="navAbout"></a>
+<button class="btn" id="addBtn"></button>
+</div>
 </nav>
 </header>
 
 <section class="hero">
-  <h1>A szabad lehetőségből<br><span>valódi üzlet.</span></h1>
-  <p>Fedezd fel a szabad időpontokat, helyeket és szolgáltatásokat.</p>
-  <div class="search">
-    <input id="searchInput" placeholder="Mit keresel?">
-    <select id="categorySelect">
-      <option value="all">Minden kategória</option>
-      <option value="Szállás">Szállás</option>
-      <option value="Szolgáltatás">Szolgáltatás</option>
-      <option value="Helyiség">Helyiség</option>
-      <option value="Eszköz">Eszköz</option>
-    </select>
-    <button class="btn" id="searchBtn">Keresés</button>
-  </div>
+<h1 id="heroTitle"></h1>
+<p id="heroSubtitle"></p>
+<div class="search">
+<input id="searchInput" type="search" maxlength="100">
+<select id="categorySelect"></select>
+<button class="btn" id="searchBtn"></button>
+</div>
 </section>
 
 <main>
 <section id="offers">
-  <h2>Fedezd fel az ajánlatokat</h2>
-  <p class="muted">Találd meg a következő lehetőséget.</p>
-  <div class="categories" id="categories">
-    <button class="category active" data-cat="all">🌍 Összes</button>
-    <button class="category" data-cat="Szállás">🏨 Szállás</button>
-    <button class="category" data-cat="Szolgáltatás">🔧 Szolgáltatás</button>
-    <button class="category" data-cat="Helyiség">🏢 Helyiség</button>
-    <button class="category" data-cat="Eszköz">💻 Eszköz</button>
-  </div>
-  <p id="count" class="muted"></p>
-  <div class="grid" id="offersGrid"></div>
-  <div class="empty" id="empty" hidden>Nincs találat. Próbálj másik keresést!</div>
+<h2 id="offersTitle"></h2>
+<p class="muted" id="offersSubtitle"></p>
+<div class="categories" id="categories"></div>
+<p id="count" class="muted"></p>
+<div class="grid" id="offersGrid"></div>
+<div class="empty" id="empty" hidden></div>
 </section>
 
 <section id="about" style="margin-top:75px">
-  <h2>Hogyan működik?</h2>
-  <p class="muted">
-    A vállalkozások meghirdetik szabad kapacitásukat.
-    A látogatók kereshetnek az ajánlatok között.
-    Ez jelenleg egy bemutatóverzió, valódi foglalás és fizetés nélkül.
-  </p>
+<h2 id="aboutTitle"></h2>
+<p class="muted" id="aboutText"></p>
 </section>
 </main>
 
-<footer>© DEALBRIDGE – Minden jog fenntartva.</footer>
+<footer id="footerText"></footer>
 
 <div class="overlay" id="addOverlay">
-  <div class="modal">
-    <h2>Új ajánlat feladása</h2>
-    <p class="notice">Az ajánlat csak ebben a böngészőben lesz mentve.</p>
-    <form id="offerForm">
-      <label>Ajánlat neve</label>
-      <input name="title" maxlength="80" required>
-      <label>Kategória</label>
-      <select name="category">
-        <option>Szállás</option>
-        <option>Szolgáltatás</option>
-        <option>Helyiség</option>
-        <option>Eszköz</option>
-      </select>
-      <label>Város</label>
-      <input name="city" maxlength="60" required>
-      <label>Ár (€)</label>
-      <input name="price" type="number" min="0" max="1000000" step="0.01" required>
-      <label>Leírás</label>
-      <textarea name="description" maxlength="500" rows="4" required></textarea>
-      <div class="modal-actions">
-        <button class="btn" type="submit">Mentés</button>
-        <button class="btn secondary" type="button" id="closeAdd">Mégse</button>
-      </div>
-    </form>
-  </div>
+<div class="modal" role="dialog" aria-modal="true">
+<h2 id="addTitle"></h2>
+<p class="notice" id="localNotice"></p>
+<form id="offerForm">
+<label for="offerTitle" id="labelTitle"></label>
+<input id="offerTitle" name="title" maxlength="80" required>
+
+<label for="offerCategory" id="labelCategory"></label>
+<select id="offerCategory" name="category"></select>
+
+<label for="offerCity" id="labelCity"></label>
+<input id="offerCity" name="city" maxlength="60" required>
+
+<label for="offerPrice" id="labelPrice"></label>
+<input id="offerPrice" name="price" type="number" min="0" max="1000000" step="0.01" required>
+
+<label for="offerDescription" id="labelDescription"></label>
+<textarea id="offerDescription" name="description" maxlength="500" rows="4" required></textarea>
+
+<div class="modal-actions">
+<button class="btn" type="submit" id="saveBtn"></button>
+<button class="btn secondary" type="button" id="closeAdd"></button>
+</div>
+</form>
+</div>
 </div>
 
 <div class="overlay" id="detailOverlay">
-  <div class="modal">
-    <h2 id="detailTitle"></h2>
-    <p id="detailCity"></p>
-    <p id="detailDescription"></p>
-    <h2 id="detailPrice"></h2>
-    <p class="notice">Bemutatóoldal – ezen a felületen még nem lehet foglalni.</p>
-    <div class="modal-actions">
-      <button class="btn secondary" id="closeDetail">Bezárás</button>
-      <button class="btn" id="deleteOffer" hidden>Saját ajánlat törlése</button>
-    </div>
-  </div>
+<div class="modal" role="dialog" aria-modal="true">
+<h2 id="detailTitle"></h2>
+<p id="detailCity"></p>
+<p id="detailDescription"></p>
+<h2 id="detailPrice"></h2>
+<p class="notice" id="demoNotice"></p>
+<div class="modal-actions">
+<button class="btn secondary" id="closeDetail"></button>
+<button class="btn" id="deleteOffer" hidden></button>
+</div>
+</div>
 </div>
 
 <script>
 "use strict";
 
-const KEY = "dealbridge_demo_offers_v1";
+const KEY="dealbridge_demo_offers_v1";
+const LANG_KEY="dealbridge_language_v1";
+const cats=["all","Szállás","Szolgáltatás","Helyiség","Eszköz"];
+const emojis=["🌍","🏨","🔧","🏢","💻"];
+const $=id=>document.getElementById(id);
 
-const samples = [
-  {id:"s1",title:"Szabad hotelszoba",category:"Szállás",city:"Rožňava",price:69,description:"Bemutató szállásajánlat. Nem valódi foglalható szoba.",demo:true},
-  {id:"s2",title:"Autószerviz időpont",category:"Szolgáltatás",city:"Rozsnyó",price:35,description:"Bemutató szervizajánlat. Nem valódi szolgáltatás.",demo:true},
-  {id:"s3",title:"Tárgyalóterem",category:"Helyiség",city:"Kassa",price:45,description:"Bemutató tárgyalóterem-ajánlat.",demo:true},
-  {id:"s4",title:"Projektor bérlés",category:"Eszköz",city:"Pozsony",price:20,description:"Bemutató eszközbérlési ajánlat.",demo:true}
-];
-
-let own = [];
-try {
-  const stored = JSON.parse(localStorage.getItem(KEY) || "[]");
-  if (Array.isArray(stored)) own = stored;
-} catch (error) {
-  console.warn("A mentett ajánlatok nem olvashatók.",error);
+const translations={
+sk:{
+navOffers:"Ponuky",navAbout:"Ako to funguje?",add:"+ Pridať ponuku",
+headline:"Voľná kapacita sa mení na",highlight:"novú príležitosť.",
+subtitle:"Objavte voľné termíny, priestory a služby.",
+placeholder:"Čo hľadáte?",search:"Hľadať",
+cats:["Všetky","Ubytovanie","Služby","Priestory","Vybavenie"],
+offers:"Objavte ponuky",offersSub:"Nájdite svoju ďalšiu príležitosť.",
+empty:"Žiadne výsledky. Skúste iné vyhľadávanie.",
+about:"Ako to funguje?",
+aboutText:"Firmy zverejňujú voľné kapacity. Návštevníci si prezerajú ponuky. Toto je ukážková verzia bez skutočných rezervácií a platieb.",
+footer:"© DEALBRIDGE – Všetky práva vyhradené.",
+newOffer:"Pridať novú ponuku",
+local:"Testovacia ponuka sa uloží iba v tomto prehliadači. Ostatní návštevníci ju neuvidia.",
+labels:["Názov ponuky","Kategória","Mesto","Cena (€)","Popis"],
+save:"Uložiť",cancel:"Zrušiť",close:"Zavrieť",del:"Odstrániť moju ponuku",
+demoNotice:"Ukážková stránka – rezervácie zatiaľ nie sú dostupné.",
+details:"Podrobnosti",demo:"UKÁŽKOVÁ PONUKA",own:"MOJA TESTOVACIA PONUKA",
+found:"ponúk",confirm:"Naozaj chcete odstrániť túto ponuku?",
+invalid:"Zadajte platnú cenu.",storage:"Prehliadač nedokázal uložiť ponuku.",
+samples:[
+["Voľná hotelová izba","Ukážková ponuka ubytovania. Izba nie je skutočne dostupná na rezerváciu."],
+["Termín v autoservise","Ukážková ponuka autoservisu. Nejde o skutočnú službu."],
+["Zasadacia miestnosť","Ukážková ponuka zasadacej miestnosti."],
+["Prenájom projektora","Ukážková ponuka prenájmu vybavenia."]
+]
+},
+hu:{
+navOffers:"Ajánlatok",navAbout:"Hogyan működik?",add:"+ Ajánlat feladása",
+headline:"A szabad lehetőségből",highlight:"valódi üzlet.",
+subtitle:"Fedezd fel a szabad időpontokat, helyeket és szolgáltatásokat.",
+placeholder:"Mit keresel?",search:"Keresés",
+cats:["Összes","Szállás","Szolgáltatás","Helyiség","Eszköz"],
+offers:"Fedezd fel az ajánlatokat",offersSub:"Találd meg a következő lehetőséget.",
+empty:"Nincs találat. Próbálj másik keresést!",
+about:"Hogyan működik?",
+aboutText:"A vállalkozások meghirdetik szabad kapacitásukat. A látogatók kereshetnek az ajánlatok között. Ez jelenleg bemutatóverzió, valódi foglalás és fizetés nélkül.",
+footer:"© DEALBRIDGE – Minden jog fenntartva.",
+newOffer:"Új ajánlat feladása",
+local:"Az ajánlat csak ebben a böngészőben lesz mentve. Más látogatók nem látják.",
+labels:["Ajánlat neve","Kategória","Város","Ár (€)","Leírás"],
+save:"Mentés",cancel:"Mégse",close:"Bezárás",del:"Saját ajánlat törlése",
+demoNotice:"Bemutatóoldal – ezen a felületen még nem lehet foglalni.",
+details:"Részletek",demo:"BEMUTATÓ AJÁNLAT",own:"SAJÁT PRÓBAAJÁNLAT",
+found:"ajánlat található",confirm:"Biztosan törlöd ezt a próbaajánlatot?",
+invalid:"Adj meg érvényes árat.",storage:"A böngésző nem tudta elmenteni az ajánlatot.",
+samples:[
+["Szabad hotelszoba","Bemutató szállásajánlat. Nem valódi foglalható szoba."],
+["Autószerviz időpont","Bemutató szervizajánlat. Nem valódi szolgáltatás."],
+["Tárgyalóterem","Bemutató tárgyalóterem-ajánlat."],
+["Projektor bérlés","Bemutató eszközbérlési ajánlat."]
+]
+},
+en:{
+navOffers:"Offers",navAbout:"How it works",add:"+ Post an offer",
+headline:"Turn unused capacity into",highlight:"new opportunities.",
+subtitle:"Discover available appointments, spaces and services.",
+placeholder:"What are you looking for?",search:"Search",
+cats:["All","Accommodation","Services","Spaces","Equipment"],
+offers:"Explore offers",offersSub:"Find your next opportunity.",
+empty:"No results found. Try another search.",
+about:"How it works",
+aboutText:"Businesses list their unused capacity. Visitors browse available offers. This is currently a demo without real bookings or payments.",
+footer:"© DEALBRIDGE – All rights reserved.",
+newOffer:"Post a new offer",
+local:"Test offers are saved only in this browser. Other visitors cannot see them.",
+labels:["Offer title","Category","City","Price (€)","Description"],
+save:"Save",cancel:"Cancel",close:"Close",del:"Delete my offer",
+demoNotice:"Demo website – bookings are not available yet.",
+details:"Details",demo:"DEMO OFFER",own:"MY TEST OFFER",
+found:"offers found",confirm:"Delete this test offer?",
+invalid:"Enter a valid price.",storage:"Your browser could not save this offer.",
+samples:[
+["Available hotel room","Demo accommodation listing. Not a real bookable room."],
+["Car service appointment","Demo garage listing. Not a real service."],
+["Meeting room","Demo meeting room listing."],
+["Projector rental","Demo equipment rental listing."]
+]
+},
+de:{
+navOffers:"Angebote",navAbout:"So funktioniert es",add:"+ Angebot erstellen",
+headline:"Freie Kapazitäten werden zu",highlight:"neuen Chancen.",
+subtitle:"Entdecken Sie freie Termine, Räume und Dienstleistungen.",
+placeholder:"Was suchen Sie?",search:"Suchen",
+cats:["Alle","Unterkünfte","Dienstleistungen","Räume","Ausrüstung"],
+offers:"Angebote entdecken",offersSub:"Finden Sie Ihre nächste Gelegenheit.",
+empty:"Keine Ergebnisse. Versuchen Sie eine andere Suche.",
+about:"So funktioniert es",
+aboutText:"Unternehmen veröffentlichen freie Kapazitäten. Besucher können Angebote durchsuchen. Dies ist eine Demoversion ohne echte Buchungen oder Zahlungen.",
+footer:"© DEALBRIDGE – Alle Rechte vorbehalten.",
+newOffer:"Neues Angebot",
+local:"Testangebote werden nur in diesem Browser gespeichert. Andere Besucher sehen sie nicht.",
+labels:["Angebotsname","Kategorie","Stadt","Preis (€)","Beschreibung"],
+save:"Speichern",cancel:"Abbrechen",close:"Schließen",del:"Mein Angebot löschen",
+demoNotice:"Demowebsite – Buchungen sind noch nicht möglich.",
+details:"Details",demo:"DEMOANGEBOT",own:"MEIN TESTANGEBOT",
+found:"Angebote gefunden",confirm:"Dieses Testangebot löschen?",
+invalid:"Geben Sie einen gültigen Preis ein.",storage:"Der Browser konnte das Angebot nicht speichern.",
+samples:[
+["Freies Hotelzimmer","Demo-Unterkunft. Kein tatsächlich buchbares Zimmer."],
+["Autowerkstatt-Termin","Demo-Werkstattangebot. Keine echte Dienstleistung."],
+["Besprechungsraum","Demoangebot für einen Besprechungsraum."],
+["Projektorverleih","Demoangebot für einen Projektor."]
+]
+},
+pl:{
+navOffers:"Oferty",navAbout:"Jak to działa?",add:"+ Dodaj ofertę",
+headline:"Wolne zasoby stają się",highlight:"nową szansą.",
+subtitle:"Odkrywaj dostępne terminy, miejsca i usługi.",
+placeholder:"Czego szukasz?",search:"Szukaj",
+cats:["Wszystkie","Noclegi","Usługi","Pomieszczenia","Sprzęt"],
+offers:"Odkryj oferty",offersSub:"Znajdź nową okazję.",
+empty:"Brak wyników. Spróbuj innego wyszukiwania.",
+about:"Jak to działa?",
+aboutText:"Firmy publikują wolne zasoby. Odwiedzający przeglądają oferty. To wersja demonstracyjna bez prawdziwych rezerwacji i płatności.",
+footer:"© DEALBRIDGE – Wszelkie prawa zastrzeżone.",
+newOffer:"Dodaj nową ofertę",
+local:"Oferty testowe są zapisywane tylko w tej przeglądarce. Inni ich nie zobaczą.",
+labels:["Nazwa oferty","Kategoria","Miasto","Cena (€)","Opis"],
+save:"Zapisz",cancel:"Anuluj",close:"Zamknij",del:"Usuń moją ofertę",
+demoNotice:"Wersja demonstracyjna – rezerwacje nie są jeszcze dostępne.",
+details:"Szczegóły",demo:"OFERTA DEMO",own:"MOJA OFERTA TESTOWA",
+found:"znalezionych ofert",confirm:"Usunąć tę ofertę testową?",
+invalid:"Podaj poprawną cenę.",storage:"Przeglądarka nie mogła zapisać oferty.",
+samples:[
+["Wolny pokój hotelowy","Przykładowy nocleg. Nie można go zarezerwować."],
+["Termin w warsztacie","Przykładowa usługa warsztatu samochodowego."],
+["Sala konferencyjna","Przykładowa oferta sali konferencyjnej."],
+["Wynajem projektora","Przykładowa oferta wynajmu sprzętu."]
+]
 }
-
-let category = "all";
-let query = "";
-let selected = null;
-
-const $ = id => document.getElementById(id);
-const icons = {
-  "Szállás":"🏨",
-  "Szolgáltatás":"🔧",
-  "Helyiség":"🏢",
-  "Eszköz":"💻"
 };
 
-function save() {
-  try {
-    localStorage.setItem(KEY,JSON.stringify(own));
-    return true;
-  } catch(error) {
-    alert("A böngésző nem tudta elmenteni az ajánlatot.");
-    return false;
+const locations=["Rožňava","Rožňava","Košice","Bratislava"];
+const prices=[69,35,45,20];
+let lang="sk",own=[],category="all",query="",selected=null;
+
+try{
+ const saved=localStorage.getItem(LANG_KEY);
+ if(Object.prototype.hasOwnProperty.call(translations,saved))lang=saved;
+}catch(e){}
+
+try{
+ const stored=JSON.parse(localStorage.getItem(KEY)||"[]");
+ if(Array.isArray(stored))own=stored.filter(x=>x&&typeof x==="object"&&!x.demo);
+}catch(e){}
+
+function t(){return translations[lang]}
+
+function sampleItems(){
+ return locations.map((city,i)=>({
+  id:"s"+(i+1),
+  title:t().samples[i][0],
+  description:t().samples[i][1],
+  category:cats[i+1],
+  city,
+  price:prices[i],
+  demo:true,
+  sampleIndex:i
+ }));
+}
+
+function make(tag,cls,value){
+ const el=document.createElement(tag);
+ if(cls)el.className=cls;
+ if(value!==undefined)el.textContent=value;
+ return el;
+}
+
+function priceText(value){
+ const locale={sk:"sk-SK",hu:"hu-HU",en:"en-GB",de:"de-DE",pl:"pl-PL"}[lang];
+ return Number(value).toLocaleString(locale)+" €";
+}
+
+function categoryLabel(cat){
+ const i=cats.indexOf(cat);
+ return i<0?cat:t().cats[i];
+}
+
+function save(){
+ try{
+  localStorage.setItem(KEY,JSON.stringify(own));
+  return true;
+ }catch(e){
+  alert(t().storage);
+  return false;
+ }
+}
+
+function render(){
+ const all=[...own,...sampleItems()];
+ const filtered=all.filter(item=>{
+  if(category!=="all"&&item.category!==category)return false;
+  const names=[item.title,item.description,item.city,categoryLabel(item.category)];
+  if(item.demo){
+   for(const language of Object.values(translations)){
+    names.push(...language.samples[item.sampleIndex]);
+   }
   }
+  return names.join(" ").toLocaleLowerCase().includes(query);
+ });
+
+ $("offersGrid").replaceChildren();
+ $("count").textContent=filtered.length+" "+t().found;
+ $("empty").hidden=filtered.length!==0;
+
+ for(const item of filtered){
+  const card=make("article","card");
+  const content=make("div","content");
+  const btn=make("button","btn",t().details);
+  btn.type="button";
+  btn.addEventListener("click",()=>openDetail(item));
+
+  content.append(
+   make("div","tag",item.demo?t().demo:t().own),
+   make("h3","",item.title),
+   make("p","muted","📍 "+item.city),
+   make("div","price",priceText(item.price)),
+   btn
+  );
+
+  const visual=make("div","visual",emojis[Math.max(1,cats.indexOf(item.category))]);
+  card.append(visual,content);
+  $("offersGrid").append(card);
+ }
+
+ document.querySelectorAll(".category").forEach(btn=>{
+  btn.classList.toggle("active",btn.dataset.cat===category);
+ });
+ $("categorySelect").value=category;
 }
 
-function element(tag,className,text) {
-  const el = document.createElement(tag);
-  if(className) el.className = className;
-  if(text !== undefined) el.textContent = text;
-  return el;
-}
+function renderCategories(){
+ for(const id of ["categorySelect","offerCategory"]){
+  const select=$(id);
+  const previous=select.value;
+  select.replaceChildren();
 
-function render() {
-  const all = [...own,...samples];
-  const filtered = all.filter(item => {
-    const matchCategory = category === "all" || item.category === category;
-    const words = (item.title+" "+item.city+" "+item.description).toLocaleLowerCase("hu");
-    return matchCategory && words.includes(query);
+  cats.forEach((cat,i)=>{
+   if(id==="offerCategory"&&i===0)return;
+   const option=make("option","",t().cats[i]);
+   option.value=cat;
+   select.append(option);
   });
 
-  $("offersGrid").replaceChildren();
-  $("count").textContent = filtered.length+" ajánlat található";
-  $("empty").hidden = filtered.length !== 0;
+  select.value=previous||(id==="categorySelect"?"all":"Szállás");
+ }
 
-  filtered.forEach(item => {
-    const card = element("article","card");
-    const visual = element("div","visual",icons[item.category] || "📦");
-    const content = element("div","content");
-    const tag = element("div","tag",item.demo?"BEMUTATÓ AJÁNLAT":"SAJÁT PRÓBAAJÁNLAT");
-    const title = element("h3","",item.title);
-    const city = element("p","muted","📍 "+item.city);
-    const price = element("div","price",Number(item.price).toLocaleString("hu-HU")+" €");
-    const button = element("button","btn","Részletek");
-    button.addEventListener("click",()=>openDetail(item));
-    content.append(tag,title,city,price,button);
-    card.append(visual,content);
-    $("offersGrid").append(card);
+ $("categories").replaceChildren();
+
+ cats.forEach((cat,i)=>{
+  const btn=make("button","category",emojis[i]+" "+t().cats[i]);
+  btn.type="button";
+  btn.dataset.cat=cat;
+  btn.addEventListener("click",()=>{
+   category=cat;
+   $("categorySelect").value=cat;
+   render();
   });
-
-  document.querySelectorAll(".category").forEach(button => {
-    button.classList.toggle("active",button.dataset.cat === category);
-  });
-  $("categorySelect").value = category;
+  $("categories").append(btn);
+ });
 }
 
-function search() {
-  query = $("searchInput").value.trim().toLocaleLowerCase("hu");
-  category = $("categorySelect").value;
-  render();
-  document.getElementById("offers").scrollIntoView({behavior:"smooth"});
+function applyLanguage(value){
+ if(!Object.prototype.hasOwnProperty.call(translations,value))return;
+
+ lang=value;
+ document.documentElement.lang=lang;
+ $("languageSwitcher").value=lang;
+
+ try{localStorage.setItem(LANG_KEY,lang)}catch(e){}
+
+ const d=t();
+ $("navOffers").textContent=d.navOffers;
+ $("navAbout").textContent=d.navAbout;
+ $("addBtn").textContent=d.add;
+
+ $("heroTitle").replaceChildren(
+  document.createTextNode(d.headline),
+  document.createElement("br"),
+  make("span","",d.highlight)
+ );
+
+ $("heroSubtitle").textContent=d.subtitle;
+ $("searchInput").placeholder=d.placeholder;
+ $("searchBtn").textContent=d.search;
+ $("offersTitle").textContent=d.offers;
+ $("offersSubtitle").textContent=d.offersSub;
+ $("empty").textContent=d.empty;
+ $("aboutTitle").textContent=d.about;
+ $("aboutText").textContent=d.aboutText;
+ $("footerText").textContent=d.footer;
+ $("addTitle").textContent=d.newOffer;
+ $("localNotice").textContent=d.local;
+
+ ["labelTitle","labelCategory","labelCity","labelPrice","labelDescription"]
+ .forEach((id,i)=>$(id).textContent=d.labels[i]);
+
+ $("saveBtn").textContent=d.save;
+ $("closeAdd").textContent=d.cancel;
+ $("closeDetail").textContent=d.close;
+ $("deleteOffer").textContent=d.del;
+ $("demoNotice").textContent=d.demoNotice;
+
+ renderCategories();
+ render();
+
+ if(selected){
+  const item=selected.demo
+   ?sampleItems().find(s=>s.id===selected.id)
+   :selected;
+  if(item)openDetail(item);
+ }
 }
 
-function openDetail(item) {
-  selected = item;
-  $("detailTitle").textContent = item.title;
-  $("detailCity").textContent = item.category+" • "+item.city;
-  $("detailDescription").textContent = item.description;
-  $("detailPrice").textContent = Number(item.price).toLocaleString("hu-HU")+" €";
-  $("deleteOffer").hidden = !!item.demo;
-  $("detailOverlay").classList.add("show");
+function openDetail(item){
+ selected=item;
+ $("detailTitle").textContent=item.title;
+ $("detailCity").textContent=categoryLabel(item.category)+" • "+item.city;
+ $("detailDescription").textContent=item.description;
+ $("detailPrice").textContent=priceText(item.price);
+ $("deleteOffer").hidden=!!item.demo;
+ $("detailOverlay").classList.add("show");
 }
 
+function search(){
+ query=$("searchInput").value.trim().toLocaleLowerCase();
+ category=$("categorySelect").value;
+ render();
+ $("offers").scrollIntoView({behavior:"smooth"});
+}
+
+$("languageSwitcher").addEventListener("change",e=>applyLanguage(e.target.value));
 $("searchBtn").addEventListener("click",search);
-$("searchInput").addEventListener("keydown",event=>{
-  if(event.key === "Enter") search();
+$("searchInput").addEventListener("keydown",e=>{
+ if(e.key==="Enter")search();
 });
 $("categorySelect").addEventListener("change",search);
-
-document.querySelectorAll(".category").forEach(button=>{
-  button.addEventListener("click",()=>{
-    category = button.dataset.cat;
-    $("categorySelect").value = category;
-    render();
-  });
-});
-
 $("addBtn").addEventListener("click",()=>{
-  $("addOverlay").classList.add("show");
+ $("addOverlay").classList.add("show");
 });
 $("closeAdd").addEventListener("click",()=>{
-  $("addOverlay").classList.remove("show");
+ $("addOverlay").classList.remove("show");
 });
 $("closeDetail").addEventListener("click",()=>{
-  $("detailOverlay").classList.remove("show");
+ $("detailOverlay").classList.remove("show");
 });
 
-$("offerForm").addEventListener("submit",event=>{
-  event.preventDefault();
-  const data = new FormData(event.target);
-  const price = Number(data.get("price"));
-  if(!Number.isFinite(price) || price < 0 || price > 1000000) {
-    alert("Adj meg érvényes árat.");
-    return;
-  }
-  const item = {
-    id:"own-"+Date.now()+"-"+Math.random().toString(36).slice(2),
-    title:String(data.get("title")).trim(),
-    category:String(data.get("category")),
-    city:String(data.get("city")).trim(),
-    price,
-    description:String(data.get("description")).trim(),
-    demo:false
-  };
-  if(!item.title || !item.city || !item.description) return;
-  own.unshift(item);
-  if(!save()) {
-    own.shift();
-    return;
-  }
-  event.target.reset();
-  $("addOverlay").classList.remove("show");
-  category = "all";
-  query = "";
-  $("searchInput").value = "";
-  render();
+$("offerForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const data=new FormData(e.target);
+ const price=Number(data.get("price"));
+
+ if(!Number.isFinite(price)||price<0||price>1000000){
+  alert(t().invalid);
+  return;
+ }
+
+ const item={
+  id:"own-"+Date.now()+"-"+Math.random().toString(36).slice(2),
+  title:String(data.get("title")).trim(),
+  category:String(data.get("category")),
+  city:String(data.get("city")).trim(),
+  price,
+  description:String(data.get("description")).trim(),
+  demo:false
+ };
+
+ if(!item.title||!item.city||!item.description)return;
+ if(!cats.includes(item.category)||item.category==="all")return;
+
+ own.unshift(item);
+ if(!save()){
+  own.shift();
+  return;
+ }
+
+ e.target.reset();
+ $("addOverlay").classList.remove("show");
+ category="all";
+ query="";
+ $("searchInput").value="";
+ render();
 });
 
 $("deleteOffer").addEventListener("click",()=>{
-  if(!selected || selected.demo) return;
-  if(!confirm("Biztosan törlöd ezt a próbaajánlatot?")) return;
-  const previous = own;
-  own = own.filter(item=>item.id!==selected.id);
-  if(!save()) {
-    own = previous;
-    return;
-  }
-  $("detailOverlay").classList.remove("show");
-  selected = null;
-  render();
+ if(!selected||selected.demo)return;
+ if(!confirm(t().confirm))return;
+
+ const previous=own;
+ own=own.filter(item=>item.id!==selected.id);
+
+ if(!save()){
+  own=previous;
+  return;
+ }
+
+ $("detailOverlay").classList.remove("show");
+ selected=null;
+ render();
 });
 
 ["addOverlay","detailOverlay"].forEach(id=>{
-  $(id).addEventListener("click",event=>{
-    if(event.target === $(id)) $(id).classList.remove("show");
-  });
+ $(id).addEventListener("click",e=>{
+  if(e.target===$(id))$(id).classList.remove("show");
+ });
 });
 
-document.addEventListener("keydown",event=>{
-  if(event.key === "Escape") {
-    $("addOverlay").classList.remove("show");
-    $("detailOverlay").classList.remove("show");
-  }
+document.addEventListener("keydown",e=>{
+ if(e.key==="Escape"){
+  $("addOverlay").classList.remove("show");
+  $("detailOverlay").classList.remove("show");
+ }
 });
 
-render();
+applyLanguage(lang);
 </script>
 </body>
 </html>
